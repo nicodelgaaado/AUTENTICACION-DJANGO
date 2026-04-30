@@ -47,6 +47,14 @@ class CalificacionesAutenticacionTests(TestCase):
         usuario = User.objects.get(username="nuevo")
         self.assertTrue(usuario.groups.filter(name="Estudiante").exists())
 
+    def test_login_y_registro_muestran_formularios_en_espanol(self):
+        login_response = self.client.get(reverse("login"))
+        registro_response = self.client.get(reverse("registro"))
+
+        self.assertContains(login_response, "Nombre de usuario")
+        self.assertContains(login_response, "Contraseña")
+        self.assertContains(registro_response, "Confirmar contraseña")
+
     def test_usuario_no_autenticado_no_accede_al_crud(self):
         response = self.client.get(reverse("listar_calificaciones"))
 
@@ -144,4 +152,4 @@ class CalificacionesAutenticacionTests(TestCase):
         response = self.client.get(reverse("promedio_general"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "3.50")
+        self.assertContains(response, "3,50")

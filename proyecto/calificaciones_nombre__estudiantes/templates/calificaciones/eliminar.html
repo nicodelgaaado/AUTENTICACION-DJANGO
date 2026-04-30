@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Eliminar calificacion{% endblock %}
+{% block title %}Eliminar calificación{% endblock %}
 
 {% block content %}
 <section class="panel">
-    <h1>Eliminar calificacion</h1>
-    <p>Confirma la eliminacion de la calificacion de {{ calificacion.nombre_estudiante }} en {{ calificacion.asignatura }}.</p>
+    <h1>Eliminar calificación</h1>
+    <p>Confirma la eliminación de la calificación de {{ calificacion.nombre_estudiante }} en {{ calificacion.asignatura }}.</p>
     <form method="post">
         {% csrf_token %}
         <button class="button danger" type="submit">Eliminar</button>

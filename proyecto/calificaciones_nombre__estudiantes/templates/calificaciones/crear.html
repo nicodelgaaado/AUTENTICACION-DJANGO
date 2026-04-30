@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Crear calificacion{% endblock %}
+{% block title %}Crear calificación{% endblock %}
 
 {% block content %}
 <section class="panel">
-    <h1>Crear calificacion</h1>
+    <h1>Crear calificación</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

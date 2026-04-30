@@ -156,14 +156,14 @@
                     <a href="{% url 'promedio_general' %}">Promedio general</a>
                 {% endif %}
                 {% if permisos.puede_crear %}
-                    <a href="{% url 'crear_calificacion' %}">Crear calificacion</a>
+                    <a href="{% url 'crear_calificacion' %}">Crear calificación</a>
                 {% endif %}
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button type="submit">Cerrar sesion</button>
+                    <button type="submit">Cerrar sesión</button>
                 </form>
             {% else %}
-                <a href="{% url 'login' %}">Iniciar sesion</a>
+                <a href="{% url 'login' %}">Iniciar sesión</a>
                 <a href="{% url 'registro' %}">Registro</a>
             {% endif %}
         </div>

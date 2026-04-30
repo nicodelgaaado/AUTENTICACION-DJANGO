@@ -1,13 +1,12 @@
 from functools import wraps
 
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CalificacionForm
+from .forms import CalificacionForm, RegistroUsuarioForm
 from .models import Calificacion
 
 
@@ -67,19 +66,19 @@ def contexto_base(request, **extra):
 
 def registro(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save()
             grupo_estudiante, _ = Group.objects.get_or_create(name=GRUPO_ESTUDIANTE)
             user.groups.add(grupo_estudiante)
             messages.success(
                 request,
-                "Usuario registrado correctamente. Ahora puedes iniciar sesion.",
+                "Usuario registrado correctamente. Ahora puedes iniciar sesión.",
             )
             return redirect("login")
         messages.error(request, "Corrige los errores del formulario de registro.")
     else:
-        form = UserCreationForm()
+        form = RegistroUsuarioForm()
 
     return render(request, "registration/registro.html", {"form": form})
 
@@ -90,7 +89,7 @@ def crear_calificacion(request):
         form = CalificacionForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Calificacion creada correctamente.")
+            messages.success(request, "Calificación creada correctamente.")
             return redirect("listar_calificaciones")
         messages.error(request, "Corrige los errores del formulario.")
     else:
@@ -128,7 +127,7 @@ def editar_calificacion(request, id):
         form = CalificacionForm(request.POST, instance=calificacion)
         if form.is_valid():
             form.save()
-            messages.success(request, "Calificacion actualizada correctamente.")
+            messages.success(request, "Calificación actualizada correctamente.")
             return redirect("listar_calificaciones")
         messages.error(request, "Corrige los errores del formulario.")
     else:
@@ -146,7 +145,7 @@ def eliminar_calificacion(request, id):
     calificacion = get_object_or_404(Calificacion, id=id)
     if request.method == "POST":
         calificacion.delete()
-        messages.success(request, "Calificacion eliminada correctamente.")
+        messages.success(request, "Calificación eliminada correctamente.")
         return redirect("listar_calificaciones")
 
     return render(

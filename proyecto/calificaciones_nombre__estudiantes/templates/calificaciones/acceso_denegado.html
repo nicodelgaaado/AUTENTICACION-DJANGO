@@ -5,11 +5,11 @@
 {% block content %}
 <section class="panel">
     <h1>Acceso denegado</h1>
-    <p>No tienes permisos para acceder a esta pagina.</p>
+    <p>No tienes permisos para acceder a esta página.</p>
     {% if permisos.puede_listar %}
         <a class="button" href="{% url 'listar_calificaciones' %}">Volver al listado</a>
     {% else %}
-        <a class="button" href="{% url 'login' %}">Iniciar sesion</a>
+        <a class="button" href="{% url 'login' %}">Iniciar sesión</a>
     {% endif %}
 </section>
 {% endblock %}
