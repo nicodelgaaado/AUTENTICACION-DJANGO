@@ -6,6 +6,28 @@ from .models import Calificacion
 
 
 class CalificacionForm(forms.ModelForm):
+    def clean_nombre_estudiante(self):
+        nombre = self.cleaned_data["nombre_estudiante"].strip()
+        if len(nombre) < 3:
+            raise forms.ValidationError(
+                "El nombre del estudiante debe tener al menos 3 caracteres."
+            )
+        if nombre.isdigit():
+            raise forms.ValidationError(
+                "El nombre del estudiante no puede contener solo números."
+            )
+        return nombre
+
+    def clean_asignatura(self):
+        asignatura = self.cleaned_data["asignatura"].strip()
+        if len(asignatura) < 3:
+            raise forms.ValidationError(
+                "La asignatura debe tener al menos 3 caracteres."
+            )
+        if asignatura.isdigit():
+            raise forms.ValidationError("La asignatura no puede contener solo números.")
+        return asignatura
+
     class Meta:
         model = Calificacion
         exclude = ("promedio",)

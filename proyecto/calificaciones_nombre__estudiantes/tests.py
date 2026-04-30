@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.urls import reverse
 
+from .forms import CalificacionForm
 from .models import Calificacion
 
 
@@ -26,7 +27,7 @@ class CalificacionesAutenticacionTests(TestCase):
 
         self.calificacion = Calificacion.objects.create(
             nombre_estudiante="Ana Perez",
-            identificacion="1001",
+            identificacion="10001",
             asignatura="Matematicas",
             nota1=Decimal("4.00"),
             nota2=Decimal("3.50"),
@@ -90,7 +91,7 @@ class CalificacionesAutenticacionTests(TestCase):
             reverse("crear_calificacion"),
             {
                 "nombre_estudiante": "Luis Gomez",
-                "identificacion": "2002",
+                "identificacion": "20002",
                 "asignatura": "Fisica",
                 "nota1": "5.00",
                 "nota2": "4.00",
@@ -99,14 +100,14 @@ class CalificacionesAutenticacionTests(TestCase):
         )
 
         self.assertRedirects(crear_response, reverse("listar_calificaciones"))
-        nueva = Calificacion.objects.get(identificacion="2002")
+        nueva = Calificacion.objects.get(identificacion="20002")
         self.assertEqual(nueva.promedio, Decimal("4.00"))
 
         editar_response = self.client.post(
             reverse("editar_calificacion", args=[nueva.id]),
             {
                 "nombre_estudiante": "Luis Gomez",
-                "identificacion": "2002",
+                "identificacion": "20002",
                 "asignatura": "Fisica",
                 "nota1": "4.00",
                 "nota2": "4.00",
@@ -138,7 +139,7 @@ class CalificacionesAutenticacionTests(TestCase):
     def test_promedios_individual_y_general(self):
         Calificacion.objects.create(
             nombre_estudiante="Carlos Ruiz",
-            identificacion="3003",
+            identificacion="30003",
             asignatura="Historia",
             nota1=Decimal("3.00"),
             nota2=Decimal("3.00"),
@@ -153,3 +154,38 @@ class CalificacionesAutenticacionTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "3,50")
+
+    def test_formulario_rechaza_datos_invalidos_de_calificacion(self):
+        form = CalificacionForm(
+            data={
+                "nombre_estudiante": "12",
+                "identificacion": "abc",
+                "asignatura": "1",
+                "nota1": "5.50",
+                "nota2": "-1.00",
+                "nota3": "4.00",
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("nombre_estudiante", form.errors)
+        self.assertIn("identificacion", form.errors)
+        self.assertIn("asignatura", form.errors)
+        self.assertIn("nota1", form.errors)
+        self.assertIn("nota2", form.errors)
+
+    def test_formulario_limpia_espacios_en_textos_validos(self):
+        form = CalificacionForm(
+            data={
+                "nombre_estudiante": "  Maria Lopez  ",
+                "identificacion": "123456",
+                "asignatura": "  Quimica  ",
+                "nota1": "4.50",
+                "nota2": "4.00",
+                "nota3": "3.50",
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["nombre_estudiante"], "Maria Lopez")
+        self.assertEqual(form.cleaned_data["asignatura"], "Quimica")
