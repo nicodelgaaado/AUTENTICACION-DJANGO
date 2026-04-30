@@ -1,197 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Calificaciones{% endblock %}</title>
-    <style>
-        :root {
-            color: #1f2937;
-            background: #f3f4f6;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            margin: 0;
-        }
-
-        nav {
-            align-items: center;
-            background: #111827;
-            color: #ffffff;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: space-between;
-            padding: 14px 24px;
-        }
-
-        nav a,
-        nav button {
-            background: transparent;
-            border: 0;
-            color: #ffffff;
-            cursor: pointer;
-            font: inherit;
-            padding: 0;
-            text-decoration: none;
-        }
-
-        nav a:hover,
-        nav button:hover {
-            text-decoration: underline;
-        }
-
-        .nav-links {
-            align-items: center;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        main {
-            margin: 32px auto;
-            max-width: 1000px;
-            padding: 0 20px;
-        }
-
-        .panel {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 24px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border-bottom: 1px solid #e5e7eb;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background: #f9fafb;
-        }
-
-        label {
-            display: block;
-            font-weight: 700;
-            margin: 12px 0 4px;
-        }
-
-        input,
-        select,
-        textarea {
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            box-sizing: border-box;
-            padding: 10px;
-            width: 100%;
-        }
-
-        .button,
-        button.button {
-            background: #2563eb;
-            border: 0;
-            border-radius: 6px;
-            color: #ffffff;
-            cursor: pointer;
-            display: inline-block;
-            font-weight: 700;
-            margin-top: 16px;
-            padding: 10px 14px;
-            text-decoration: none;
-        }
-
-        .button.secondary {
-            background: #4b5563;
-        }
-
-        .button.danger {
-            background: #dc2626;
-        }
-
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .messages {
-            list-style: none;
-            margin: 0 0 16px;
-            padding: 0;
-        }
-
-        .messages li {
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            padding: 10px;
-        }
-
-        .summary {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 6px;
-            margin-top: 18px;
-            padding: 14px;
-        }
-
-        .help-text,
-        .help-list {
-            color: #4b5563;
-            font-size: 0.95rem;
-            margin: 6px 0 0;
-        }
-
-        .help-list {
-            padding-left: 18px;
-        }
-
-        .field-errors {
-            color: #b91c1c;
-            list-style: none;
-            margin: 6px 0 0;
-            padding: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'calificaciones_nombre__estudiantes/styles.css' %}">
 </head>
 <body>
-    <nav>
-        <strong>Sistema de calificaciones</strong>
-        <div class="nav-links">
-            {% if user.is_authenticated %}
-                <span>{{ user.username }}</span>
-                {% if permisos.puede_listar %}
-                    <a href="{% url 'listar_calificaciones' %}">Calificaciones</a>
-                    <a href="{% url 'promedio_general' %}">Promedio general</a>
+    {% with current=request.resolver_match.url_name %}
+    <header class="site-header">
+        <div class="site-nav">
+            <a class="brand" href="{% url 'home' %}">
+                <span class="brand-mark" aria-hidden="true"></span>
+                <span class="brand-copy">
+                    <strong>Sistema de calificaciones</strong>
+                    <span>Panel académico</span>
+                </span>
+            </a>
+            <div class="nav-links">
+                <a class="nav-link{% if current == 'home' %} active{% endif %}" href="{% url 'home' %}">Inicio</a>
+                {% if user.is_authenticated %}
+                    <span class="user-chip">{{ user.username }}</span>
+                    {% if permisos.puede_listar %}
+                        <a class="nav-link{% if current == 'listar_calificaciones' %} active{% endif %}" href="{% url 'listar_calificaciones' %}">Calificaciones</a>
+                        <a class="nav-link{% if current == 'promedio_general' %} active{% endif %}" href="{% url 'promedio_general' %}">Promedio general</a>
+                    {% endif %}
+                    {% if permisos.puede_crear %}
+                        <a class="nav-link{% if current == 'crear_calificacion' %} active{% endif %}" href="{% url 'crear_calificacion' %}">Crear calificación</a>
+                    {% endif %}
+                    <form class="inline-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="button ghost button-compact" type="submit">Cerrar sesión</button>
+                    </form>
+                {% else %}
+                    <a class="nav-link{% if current == 'login' %} active{% endif %}" href="{% url 'login' %}">Iniciar sesión</a>
+                    <a class="nav-link{% if current == 'registro' %} active{% endif %}" href="{% url 'registro' %}">Registro</a>
                 {% endif %}
-                {% if permisos.puede_crear %}
-                    <a href="{% url 'crear_calificacion' %}">Crear calificación</a>
-                {% endif %}
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Cerrar sesión</button>
-                </form>
-            {% else %}
-                <a href="{% url 'login' %}">Iniciar sesión</a>
-                <a href="{% url 'registro' %}">Registro</a>
-            {% endif %}
+            </div>
         </div>
-    </nav>
+    </header>
+    {% endwith %}
 
-    <main>
+    <main class="app-shell">
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <li class="message {{ message.tags|default:'info' }}">{{ message }}</li>
                 {% endfor %}
             </ul>
         {% endif %}

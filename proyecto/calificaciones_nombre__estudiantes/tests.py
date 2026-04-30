@@ -157,6 +157,18 @@ class CalificacionesAutenticacionTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response.url)
 
+    def test_home_muestra_index_para_anonimo_y_autenticado(self):
+        response_anonimo = self.client.get(reverse("home"))
+        self.assertEqual(response_anonimo.status_code, 200)
+        self.assertContains(response_anonimo, "Sistema de calificaciones")
+        self.assertContains(response_anonimo, "Iniciar sesión")
+
+        self.client.force_login(self.estudiante)
+        response_autenticado = self.client.get(reverse("home"))
+        self.assertEqual(response_autenticado.status_code, 200)
+        self.assertContains(response_autenticado, "Ir a calificaciones")
+        self.assertContains(response_autenticado, "Promedio general")
+
     def test_estudiante_solo_lista_y_ve_promedio(self):
         self.client.force_login(self.estudiante)
 

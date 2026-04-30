@@ -3,13 +3,32 @@
 {% block title %}Crear calificación{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h1>Crear calificación</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button" type="submit">Guardar</button>
-        <a class="button secondary" href="{% url 'listar_calificaciones' %}">Cancelar</a>
-    </form>
+<section class="page-narrow">
+    <article class="panel">
+        <div class="panel-header">
+            <h1 class="panel-title">Crear calificación</h1>
+            <p class="panel-copy">Registra una nueva nota y deja que el sistema calcule el promedio automáticamente.</p>
+        </div>
+        <form method="post" class="form-stack">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-alert form-alert-danger">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% include "includes/form_field.html" with field=form.nombre_estudiante %}
+            {% include "includes/form_field.html" with field=form.identificacion %}
+            {% include "includes/form_field.html" with field=form.asignatura %}
+            {% include "includes/form_field.html" with field=form.nota1 %}
+            {% include "includes/form_field.html" with field=form.nota2 %}
+            {% include "includes/form_field.html" with field=form.nota3 %}
+            <div class="button-row">
+                <button class="button" type="submit">Guardar</button>
+                <a class="button secondary" href="{% url 'listar_calificaciones' %}">Cancelar</a>
+            </div>
+        </form>
+    </article>
 </section>
 {% endblock %}

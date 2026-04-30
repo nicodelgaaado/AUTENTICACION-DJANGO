@@ -1,0 +1,20 @@
+<div class="form-field{% if field.errors %} has-error{% endif %}">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.errors %}
+        <ul class="field-errors">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if show_password_rules %}
+        <ul class="help-list">
+            <li>Mínimo 8 caracteres.</li>
+            <li>Evita datos personales.</li>
+            <li>No uses contraseñas comunes ni solo números.</li>
+        </ul>
+    {% elif field.help_text %}
+        <p class="help-text">{{ field.help_text }}</p>
+    {% endif %}
+</div>

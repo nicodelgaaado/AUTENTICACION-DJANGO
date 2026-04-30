@@ -64,6 +64,18 @@ def contexto_base(request, **extra):
     return contexto
 
 
+def home(request):
+    permisos = permisos_usuario(request.user)
+    return render(
+        request,
+        "home.html",
+        {
+            "permisos": permisos,
+            "usuario_autenticado": request.user.is_authenticated,
+        },
+    )
+
+
 def registro(request):
     if request.method == "POST":
         form = RegistroUsuarioForm(request.POST)

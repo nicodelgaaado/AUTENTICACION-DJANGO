@@ -3,66 +3,89 @@
 {% block title %}Listado de calificaciones{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h1>Calificaciones registradas</h1>
-
-    {% if permisos.puede_crear %}
-        <a class="button" href="{% url 'crear_calificacion' %}">Nueva calificación</a>
-    {% endif %}
-
-    <table>
-        <thead>
-            <tr>
-                <th>Estudiante</th>
-                <th>Identificación</th>
-                <th>Asignatura</th>
-                <th>Nota 1</th>
-                <th>Nota 2</th>
-                <th>Nota 3</th>
-                <th>Promedio</th>
-                {% if permisos.puede_editar or permisos.puede_eliminar %}
-                    <th>Acciones</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for calificacion in calificaciones %}
-                <tr>
-                    <td>{{ calificacion.nombre_estudiante }}</td>
-                    <td>{{ calificacion.identificacion }}</td>
-                    <td>{{ calificacion.asignatura }}</td>
-                    <td>{{ calificacion.nota1 }}</td>
-                    <td>{{ calificacion.nota2 }}</td>
-                    <td>{{ calificacion.nota3 }}</td>
-                    <td>{{ calificacion.promedio }}</td>
-                    {% if permisos.puede_editar or permisos.puede_eliminar %}
-                        <td>
-                            <div class="actions">
-                                {% if permisos.puede_editar %}
-                                    <a class="button secondary" href="{% url 'editar_calificacion' calificacion.id %}">Editar</a>
-                                {% endif %}
-                                {% if permisos.puede_eliminar %}
-                                    <a class="button danger" href="{% url 'eliminar_calificacion' calificacion.id %}">Eliminar</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    {% endif %}
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="{% if permisos.puede_editar or permisos.puede_eliminar %}8{% else %}7{% endif %}">No hay calificaciones registradas.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="summary">
-        <strong>Promedio general:</strong>
-        {% if hay_promedio %}
-            {{ promedio_general|floatformat:2 }}
-        {% else %}
-            Sin registros
+<div class="page-stack">
+    <section class="page-header">
+        <div>
+            <h1 class="page-title">Calificaciones registradas</h1>
+            <p class="page-copy">Consulta las notas cargadas por rol, revisa promedios y accede a acciones disponibles.</p>
+        </div>
+        {% if permisos.puede_crear %}
+            <a class="button" href="{% url 'crear_calificacion' %}">Nueva calificación</a>
         {% endif %}
-    </div>
-</section>
+    </section>
+
+    <section class="summary-grid">
+        <article class="panel summary-card">
+            <span class="summary-label">Promedio general</span>
+            <strong class="summary-value">
+                {% if hay_promedio %}
+                    {{ promedio_general|floatformat:2 }}
+                {% else %}
+                    Sin registros
+                {% endif %}
+            </strong>
+            <p class="summary-copy">Promedio calculado con las calificaciones disponibles.</p>
+        </article>
+    </section>
+
+    <section class="panel table-panel">
+        <div class="panel-header panel-header-inline">
+            <div>
+                <h2 class="panel-title">Listado completo</h2>
+                <p class="panel-copy">Vista general de estudiantes, asignaturas y promedio individual.</p>
+            </div>
+        </div>
+
+        {% if calificaciones %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Identificación</th>
+                            <th>Asignatura</th>
+                            <th class="numeric-cell">Nota 1</th>
+                            <th class="numeric-cell">Nota 2</th>
+                            <th class="numeric-cell">Nota 3</th>
+                            <th class="numeric-cell">Promedio</th>
+                            {% if permisos.puede_editar or permisos.puede_eliminar %}
+                                <th>Acciones</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for calificacion in calificaciones %}
+                            <tr>
+                                <td>{{ calificacion.nombre_estudiante }}</td>
+                                <td>{{ calificacion.identificacion }}</td>
+                                <td>{{ calificacion.asignatura }}</td>
+                                <td class="numeric-cell">{{ calificacion.nota1 }}</td>
+                                <td class="numeric-cell">{{ calificacion.nota2 }}</td>
+                                <td class="numeric-cell">{{ calificacion.nota3 }}</td>
+                                <td class="numeric-cell"><strong>{{ calificacion.promedio }}</strong></td>
+                                {% if permisos.puede_editar or permisos.puede_eliminar %}
+                                    <td>
+                                        <div class="actions">
+                                            {% if permisos.puede_editar %}
+                                                <a class="button secondary button-compact" href="{% url 'editar_calificacion' calificacion.id %}">Editar</a>
+                                            {% endif %}
+                                            {% if permisos.puede_eliminar %}
+                                                <a class="button danger button-compact" href="{% url 'eliminar_calificacion' calificacion.id %}">Eliminar</a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>No hay calificaciones registradas.</h2>
+                <p>Cuando se creen nuevos registros, aparecerán aquí con sus promedios calculados.</p>
+            </div>
+        {% endif %}
+    </section>
+</div>
 {% endblock %}
