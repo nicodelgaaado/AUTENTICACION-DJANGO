@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Calificaciones{% endblock %}</title>
+    <style>
+        :root {
+            color: #1f2937;
+            background: #f3f4f6;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        nav {
+            align-items: center;
+            background: #111827;
+            color: #ffffff;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            padding: 14px 24px;
+        }
+
+        nav a,
+        nav button {
+            background: transparent;
+            border: 0;
+            color: #ffffff;
+            cursor: pointer;
+            font: inherit;
+            padding: 0;
+            text-decoration: none;
+        }
+
+        nav a:hover,
+        nav button:hover {
+            text-decoration: underline;
+        }
+
+        .nav-links {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        main {
+            margin: 32px auto;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+
+        .panel {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin: 12px 0 4px;
+        }
+
+        input,
+        select,
+        textarea {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .button,
+        button.button {
+            background: #2563eb;
+            border: 0;
+            border-radius: 6px;
+            color: #ffffff;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: 700;
+            margin-top: 16px;
+            padding: 10px 14px;
+            text-decoration: none;
+        }
+
+        .button.secondary {
+            background: #4b5563;
+        }
+
+        .button.danger {
+            background: #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .messages {
+            list-style: none;
+            margin: 0 0 16px;
+            padding: 0;
+        }
+
+        .messages li {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            padding: 10px;
+        }
+
+        .summary {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            margin-top: 18px;
+            padding: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <strong>Sistema de calificaciones</strong>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <span>{{ user.username }}</span>
+                {% if permisos.puede_listar %}
+                    <a href="{% url 'listar_calificaciones' %}">Calificaciones</a>
+                    <a href="{% url 'promedio_general' %}">Promedio general</a>
+                {% endif %}
+                {% if permisos.puede_crear %}
+                    <a href="{% url 'crear_calificacion' %}">Crear calificacion</a>
+                {% endif %}
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar sesion</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesion</a>
+                <a href="{% url 'registro' %}">Registro</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

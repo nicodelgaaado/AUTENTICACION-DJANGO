@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Listado de calificaciones{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Calificaciones registradas</h1>
+
+    {% if permisos.puede_crear %}
+        <a class="button" href="{% url 'crear_calificacion' %}">Nueva calificacion</a>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Estudiante</th>
+                <th>Identificacion</th>
+                <th>Asignatura</th>
+                <th>Nota 1</th>
+                <th>Nota 2</th>
+                <th>Nota 3</th>
+                <th>Promedio</th>
+                {% if permisos.puede_editar or permisos.puede_eliminar %}
+                    <th>Acciones</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for calificacion in calificaciones %}
+                <tr>
+                    <td>{{ calificacion.nombre_estudiante }}</td>
+                    <td>{{ calificacion.identificacion }}</td>
+                    <td>{{ calificacion.asignatura }}</td>
+                    <td>{{ calificacion.nota1 }}</td>
+                    <td>{{ calificacion.nota2 }}</td>
+                    <td>{{ calificacion.nota3 }}</td>
+                    <td>{{ calificacion.promedio }}</td>
+                    {% if permisos.puede_editar or permisos.puede_eliminar %}
+                        <td>
+                            <div class="actions">
+                                {% if permisos.puede_editar %}
+                                    <a class="button secondary" href="{% url 'editar_calificacion' calificacion.id %}">Editar</a>
+                                {% endif %}
+                                {% if permisos.puede_eliminar %}
+                                    <a class="button danger" href="{% url 'eliminar_calificacion' calificacion.id %}">Eliminar</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="{% if permisos.puede_editar or permisos.puede_eliminar %}8{% else %}7{% endif %}">No hay calificaciones registradas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="summary">
+        <strong>Promedio general:</strong>
+        {% if hay_promedio %}
+            {{ promedio_general|floatformat:2 }}
+        {% else %}
+            Sin registros
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

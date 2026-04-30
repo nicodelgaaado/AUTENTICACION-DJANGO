@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Registro de usuario</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button" type="submit">Crear usuario</button>
+    </form>
+    <p>Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesion</a></p>
+</section>
+{% endblock %}
