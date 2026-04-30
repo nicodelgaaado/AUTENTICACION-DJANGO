@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.urls import reverse
 
-from .forms import CalificacionForm
+from .forms import CalificacionForm, RegistroUsuarioForm
 from .models import Calificacion
 
 
@@ -55,6 +55,21 @@ class CalificacionesAutenticacionTests(TestCase):
         self.assertContains(login_response, "Nombre de usuario")
         self.assertContains(login_response, "Contraseña")
         self.assertContains(registro_response, "Confirmar contraseña")
+        self.assertContains(registro_response, "entre 3 y 30 caracteres")
+        self.assertContains(registro_response, "Mínimo 8 caracteres")
+        self.assertNotContains(registro_response, "150 caracteres")
+
+    def test_registro_rechaza_nombre_de_usuario_mayor_a_30_caracteres(self):
+        form = RegistroUsuarioForm(
+            data={
+                "username": "usuario_con_nombre_demasiado_largo",
+                "password1": "ClaveSegura123",
+                "password2": "ClaveSegura123",
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("username", form.errors)
 
     def test_usuario_no_autenticado_no_accede_al_crud(self):
         response = self.client.get(reverse("listar_calificaciones"))

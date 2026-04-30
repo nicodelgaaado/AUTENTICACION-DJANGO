@@ -47,26 +47,26 @@ class RegistroUsuarioForm(UserCreationForm):
     }
     username = forms.CharField(
         label="Nombre de usuario",
-        help_text="Requerido. Usa 150 caracteres o menos.",
+        min_length=3,
+        max_length=30,
+        help_text="Requerido. Usa entre 3 y 30 caracteres.",
         error_messages={
             "unique": "Ya existe un usuario con ese nombre.",
+            "max_length": "El nombre de usuario no puede superar 30 caracteres.",
+            "min_length": "El nombre de usuario debe tener al menos 3 caracteres.",
         },
     )
     password1 = forms.CharField(
         label="Contraseña",
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-        help_text=(
-            "La contraseña no puede ser demasiado similar a tus datos, "
-            "debe tener al menos 8 caracteres, no puede ser común y no "
-            "puede ser solo numérica."
-        ),
+        help_text="",
     )
     password2 = forms.CharField(
         label="Confirmar contraseña",
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-        help_text="Ingresa la misma contraseña para verificarla.",
+        help_text="Repite la contraseña para confirmarla.",
     )
 
     class Meta:
