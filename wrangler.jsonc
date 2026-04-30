@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "autenticacion-django",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-04-30",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "autenticacion-django-db",
+      "database_id": "92209a08-0de1-4892-8352-44347c111077"
+    }
+  ]
+}
