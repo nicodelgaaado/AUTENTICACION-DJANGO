@@ -64,6 +64,39 @@ Luego abrir:
 http://127.0.0.1:8000/
 ```
 
+## Despliegue en Cloudflare
+
+El proyecto tambien incluye una version adaptada a Cloudflare Workers con D1:
+
+- Worker: `autenticacion-django`
+- URL publica: `https://autenticacion-django.delganicof29.workers.dev/`
+- Base de datos D1: `autenticacion-django-db`
+- Binding D1: `DB`
+
+Archivos agregados para Cloudflare:
+
+```text
+cloudflare/
+  worker.js
+  schema.sql
+wrangler.jsonc
+package.json
+```
+
+La version Worker conserva registro, inicio/cierre de sesion, roles, CRUD de calificaciones y promedio general. La recuperacion de contrasena queda como pantalla informativa porque el despliegue en Workers no usa el SMTP de Django.
+
+Para validar el Worker localmente:
+
+```powershell
+npx wrangler deploy cloudflare/worker.js --dry-run
+```
+
+Para publicar cambios desde una terminal autenticada con Wrangler:
+
+```powershell
+npx wrangler deploy cloudflare/worker.js
+```
+
 ## Rutas disponibles
 
 | Ruta | Nombre | Descripcion |
