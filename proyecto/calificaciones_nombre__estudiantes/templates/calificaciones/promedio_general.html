@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Promedio general{% endblock %}
+
+{% block content %}
+<section class="page-narrow">
+    <article class="panel summary-card summary-card-large">
+        <div class="panel-header">
+            <h1 class="panel-title">Promedio general</h1>
+            <p class="panel-copy">Resumen consolidado del rendimiento académico registrado en el sistema.</p>
+        </div>
+        <div class="summary-feature">
+            {% if hay_promedio %}
+                <span class="summary-label">Resultado actual</span>
+                <strong class="summary-value summary-value-large">{{ promedio_general|floatformat:2 }}</strong>
+                <p class="summary-copy">El promedio general es {{ promedio_general|floatformat:2 }}.</p>
+            {% else %}
+                <span class="summary-label">Resultado actual</span>
+                <strong class="summary-value summary-value-large">Sin registros</strong>
+                <p class="summary-copy">No hay calificaciones registradas.</p>
+            {% endif %}
+        </div>
+        <div class="button-row">
+            <a class="button secondary" href="{% url 'listar_calificaciones' %}">Volver al listado</a>
+        </div>
+    </article>
+</section>
+{% endblock %}

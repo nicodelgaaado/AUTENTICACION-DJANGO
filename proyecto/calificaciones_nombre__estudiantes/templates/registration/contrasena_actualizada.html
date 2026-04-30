@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Contraseña actualizada{% endblock %}
+
+{% block content %}
+<section class="auth-layout">
+    <article class="panel status-card">
+        <div class="status-icon" aria-hidden="true">✓</div>
+        <h1 class="panel-title">Contraseña actualizada</h1>
+        <p class="panel-copy">Tu contraseña fue cambiada correctamente. Ya puedes iniciar sesión con la nueva contraseña.</p>
+        <a class="button" href="{% url 'login' %}">Iniciar sesión</a>
+    </article>
+</section>
+{% endblock %}

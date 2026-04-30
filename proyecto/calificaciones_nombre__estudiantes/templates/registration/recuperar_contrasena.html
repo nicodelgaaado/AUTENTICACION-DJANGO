@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Recuperar contraseña{% endblock %}
+
+{% block content %}
+<section class="auth-layout">
+    <article class="panel auth-card">
+        <div class="panel-header">
+            <h1 class="panel-title">Recuperar contraseña</h1>
+            <p class="panel-copy">Ingresa el correo asociado a tu cuenta. Si existe una cuenta activa con ese correo, enviaremos un enlace para cambiar la contraseña.</p>
+        </div>
+        <form method="post" class="form-stack">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-alert form-alert-danger">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% include "includes/form_field.html" with field=form.email %}
+            <div class="button-row">
+                <button class="button" type="submit">Enviar enlace</button>
+                <a class="button secondary" href="{% url 'login' %}">Volver al inicio de sesión</a>
+            </div>
+        </form>
+    </article>
+</section>
+{% endblock %}

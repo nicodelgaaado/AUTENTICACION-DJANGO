@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<section class="home-hero">
+    <div class="home-grid">
+        <article class="panel home-copy-card">
+            <span class="hero-kicker">Plataforma académica</span>
+            <h1 class="hero-title">Sistema de calificaciones para consultar, registrar y administrar notas con claridad.</h1>
+            <p class="hero-copy">Gestiona acceso por roles, consulta promedios y trabaja con una interfaz simple para estudiantes, docentes y administradores.</p>
+
+            <div class="button-row home-actions">
+                {% if user.is_authenticated and permisos.puede_listar %}
+                    <a class="button" href="{% url 'listar_calificaciones' %}">Ir a calificaciones</a>
+                    <a class="button secondary" href="{% url 'promedio_general' %}">Promedio general</a>
+                {% else %}
+                    <a class="button" href="{% url 'login' %}">Iniciar sesión</a>
+                    <a class="button secondary" href="{% url 'registro' %}">Crear cuenta</a>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="panel home-highlight-card">
+            <div class="highlight-block">
+                <span class="summary-label">Acceso</span>
+                <strong class="highlight-title">
+                    {% if user.is_authenticated %}
+                        Sesión activa para {{ user.username }}
+                    {% else %}
+                        Ingreso y registro centralizados
+                    {% endif %}
+                </strong>
+                <p class="summary-copy">
+                    {% if user.is_authenticated %}
+                        Desde aquí puedes entrar al módulo principal, revisar promedios y continuar con tus permisos asignados.
+                    {% else %}
+                        Inicia sesión, crea tu cuenta o recupera tu contraseña desde un mismo punto de entrada.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>Roles por usuario</strong>
+                    <p>Administrador, Docente y Estudiante con permisos diferenciados.</p>
+                </div>
+                <div class="feature-item">
+                    <strong>Promedios automáticos</strong>
+                    <p>El sistema calcula resultados individuales y el promedio general.</p>
+                </div>
+                <div class="feature-item">
+                    <strong>Recuperación segura</strong>
+                    <p>Restablece acceso por correo desde el flujo de autenticación.</p>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}
