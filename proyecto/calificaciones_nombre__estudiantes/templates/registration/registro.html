@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Registro de usuario</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="field-errors">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if field.name == "password1" %}
+                    <ul class="help-list">
+                        <li>Mínimo 8 caracteres.</li>
+                        <li>Evita datos personales.</li>
+                        <li>No uses contraseñas comunes ni solo números.</li>
+                    </ul>
+                {% elif field.help_text %}
+                    <span class="help-text">{{ field.help_text }}</span>
+                {% endif %}
+            </p>
+        {% endfor %}
+        <button class="button" type="submit">Crear usuario</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+</section>
+{% endblock %}

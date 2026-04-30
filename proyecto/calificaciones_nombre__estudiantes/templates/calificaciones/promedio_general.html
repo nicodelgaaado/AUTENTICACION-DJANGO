@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Promedio general{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Promedio general</h1>
+    <div class="summary">
+        {% if hay_promedio %}
+            El promedio general es {{ promedio_general|floatformat:2 }}.
+        {% else %}
+            No hay calificaciones registradas.
+        {% endif %}
+    </div>
+    <a class="button secondary" href="{% url 'listar_calificaciones' %}">Volver al listado</a>
+</section>
+{% endblock %}

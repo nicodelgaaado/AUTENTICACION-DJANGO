@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Cambiar contraseña{% endblock %}
+
+{% block content %}
+<section class="panel">
+    {% if validlink %}
+        <h1>Cambiar contraseña</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <ul class="help-list">
+                <li>Mínimo 8 caracteres.</li>
+                <li>Evita datos personales.</li>
+                <li>No uses contraseñas comunes ni solo números.</li>
+            </ul>
+            <button class="button" type="submit">Guardar nueva contraseña</button>
+        </form>
+    {% else %}
+        <h1>Enlace inválido</h1>
+        <p>El enlace de recuperación no es válido o ya fue usado. Solicita uno nuevo.</p>
+        <a class="button" href="{% url 'password_reset' %}">Solicitar nuevo enlace</a>
+    {% endif %}
+</section>
+{% endblock %}

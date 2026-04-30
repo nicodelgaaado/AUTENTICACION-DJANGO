@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Recuperar contraseña{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Recuperar contraseña</h1>
+    <p>Ingresa el correo asociado a tu cuenta. Si existe una cuenta activa con ese correo, enviaremos un enlace para cambiar la contraseña.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button" type="submit">Enviar enlace</button>
+        <a class="button secondary" href="{% url 'login' %}">Volver al inicio de sesión</a>
+    </form>
+</section>
+{% endblock %}
