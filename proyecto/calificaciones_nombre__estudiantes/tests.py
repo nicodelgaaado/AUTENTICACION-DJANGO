@@ -1,7 +1,10 @@
 from decimal import Decimal
+import re
 
 from django.contrib.auth.models import Group, User
+from django.core import mail
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from .forms import CalificacionForm, RegistroUsuarioForm
@@ -39,6 +42,7 @@ class CalificacionesAutenticacionTests(TestCase):
             reverse("registro"),
             {
                 "username": "nuevo",
+                "email": "nuevo@example.com",
                 "password1": "ClaveSegura123",
                 "password2": "ClaveSegura123",
             },
@@ -46,6 +50,7 @@ class CalificacionesAutenticacionTests(TestCase):
 
         self.assertRedirects(response, reverse("login"))
         usuario = User.objects.get(username="nuevo")
+        self.assertEqual(usuario.email, "nuevo@example.com")
         self.assertTrue(usuario.groups.filter(name="Estudiante").exists())
 
     def test_login_y_registro_muestran_formularios_en_espanol(self):
@@ -63,6 +68,7 @@ class CalificacionesAutenticacionTests(TestCase):
         form = RegistroUsuarioForm(
             data={
                 "username": "usuario_con_nombre_demasiado_largo",
+                "email": "largo@example.com",
                 "password1": "ClaveSegura123",
                 "password2": "ClaveSegura123",
             }
@@ -70,6 +76,80 @@ class CalificacionesAutenticacionTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn("username", form.errors)
+
+    def test_registro_requiere_email_y_rechaza_email_duplicado(self):
+        User.objects.create_user(
+            "con_email",
+            email="duplicado@example.com",
+            password="ClaveSegura123",
+        )
+
+        sin_email = RegistroUsuarioForm(
+            data={
+                "username": "sinemail",
+                "password1": "ClaveSegura123",
+                "password2": "ClaveSegura123",
+            }
+        )
+        duplicado = RegistroUsuarioForm(
+            data={
+                "username": "duplicado",
+                "email": "DUPLICADO@example.com",
+                "password1": "ClaveSegura123",
+                "password2": "ClaveSegura123",
+            }
+        )
+
+        self.assertFalse(sin_email.is_valid())
+        self.assertIn("email", sin_email.errors)
+        self.assertFalse(duplicado.is_valid())
+        self.assertIn("email", duplicado.errors)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="sistema@example.com",
+    )
+    def test_recuperacion_de_contrasena_envia_email_y_permite_cambiarla(self):
+        usuario = User.objects.create_user(
+            "recuperable",
+            email="recuperable@example.com",
+            password="ClaveAnterior123",
+        )
+
+        login_response = self.client.get(reverse("login"))
+        self.assertContains(login_response, "¿Olvidaste tu contraseña?")
+
+        reset_response = self.client.post(
+            reverse("password_reset"),
+            {"email": usuario.email},
+        )
+
+        self.assertRedirects(reset_response, reverse("password_reset_done"))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Recuperación de contraseña")
+        self.assertIn("recuperable", mail.outbox[0].body)
+
+        reset_path = re.search(
+            r"http://testserver(?P<path>/reset/.+/.+)/?",
+            mail.outbox[0].body,
+        ).group("path")
+        confirm_response = self.client.get(reset_path)
+        confirm_path = confirm_response.headers.get("Location", reset_path)
+
+        cambio_response = self.client.post(
+            confirm_path,
+            {
+                "new_password1": "ClaveNueva123",
+                "new_password2": "ClaveNueva123",
+            },
+        )
+
+        self.assertRedirects(cambio_response, reverse("password_reset_complete"))
+        usuario.refresh_from_db()
+        self.assertTrue(usuario.check_password("ClaveNueva123"))
+        self.assertTrue(
+            self.client.login(username="recuperable", password="ClaveNueva123")
+        )
 
     def test_usuario_no_autenticado_no_accede_al_crud(self):
         response = self.client.get(reverse("listar_calificaciones"))

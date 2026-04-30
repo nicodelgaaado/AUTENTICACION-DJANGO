@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Correo enviado{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h1>Revisa tu correo</h1>
+    <p>Si el correo indicado pertenece a una cuenta activa, recibirás instrucciones para recuperar la contraseña.</p>
+    <a class="button" href="{% url 'login' %}">Volver al inicio de sesión</a>
+</section>
+{% endblock %}

@@ -6,6 +6,7 @@ Aplicacion Django para gestionar calificaciones de estudiantes con autenticacion
 
 - Registro de usuarios con `UserCreationForm`.
 - Inicio y cierre de sesion con las vistas nativas de Django.
+- Recuperacion de contrasena por email con las vistas nativas de Django.
 - CRUD de calificaciones protegido por autenticacion.
 - Roles basicos con grupos de Django: `Administrador`, `Docente` y `Estudiante`.
 - Calculo automatico del promedio individual en el modelo `Calificacion`.
@@ -71,6 +72,10 @@ http://127.0.0.1:8000/
 | `/login/` | login | Inicio de sesion |
 | `/logout/` | logout | Cierre de sesion |
 | `/registro/` | registro | Registro de usuario |
+| `/password-reset/` | password_reset | Solicitar recuperacion de contrasena |
+| `/password-reset/done/` | password_reset_done | Confirmacion de envio |
+| `/reset/<uidb64>/<token>/` | password_reset_confirm | Definir nueva contrasena |
+| `/reset/done/` | password_reset_complete | Recuperacion finalizada |
 | `/calificaciones/` | listar_calificaciones | Listado de calificaciones |
 | `/calificaciones/crear/` | crear_calificacion | Crear calificacion |
 | `/calificaciones/editar/<id>/` | editar_calificacion | Editar calificacion |
@@ -139,6 +144,25 @@ http://127.0.0.1:8000/admin/
 
 Los usuarios creados desde `/registro/` se agregan automaticamente al grupo `Estudiante`.
 
+## Recuperacion de contrasena por SMTP
+
+El formulario de registro exige correo electronico unico. Ese correo se usa para enviar el enlace seguro de recuperacion de contrasena.
+
+Configura estas variables de entorno antes de ejecutar el servidor si vas a enviar correos reales:
+
+```powershell
+$env:EMAIL_HOST="smtp.tu-proveedor.com"
+$env:EMAIL_PORT="587"
+$env:EMAIL_HOST_USER="usuario-smtp"
+$env:EMAIL_HOST_PASSWORD="clave-smtp"
+$env:EMAIL_USE_TLS="True"
+$env:EMAIL_USE_SSL="False"
+$env:DEFAULT_FROM_EMAIL="Sistema Calificaciones <no-reply@tu-dominio.com>"
+python manage.py runserver
+```
+
+No guardes credenciales SMTP en el repositorio. Los usuarios existentes sin correo deben actualizarse desde `/admin/` antes de usar la recuperacion de contrasena.
+
 ## Operacion basica
 
 1. Crear o iniciar sesion con un usuario.
@@ -163,6 +187,8 @@ python manage.py test
 Las pruebas cubren:
 
 - Registro de usuario y asignacion automatica a `Estudiante`.
+- Registro con correo obligatorio y unico.
+- Recuperacion de contrasena con backend de correo en memoria durante tests.
 - Redireccion de usuario no autenticado hacia login.
 - Permisos de `Estudiante`.
 - Permisos de `Docente`.

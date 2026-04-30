@@ -1,5 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    UserCreationForm,
+)
 from django.contrib.auth.models import User
 
 from .models import Calificacion
@@ -56,6 +61,14 @@ class RegistroUsuarioForm(UserCreationForm):
             "min_length": "El nombre de usuario debe tener al menos 3 caracteres.",
         },
     )
+    email = forms.EmailField(
+        label="Correo electrónico",
+        help_text="Se usará para recuperar tu contraseña.",
+        error_messages={
+            "required": "El correo electrónico es obligatorio.",
+            "invalid": "Ingresa un correo electrónico válido.",
+        },
+    )
     password1 = forms.CharField(
         label="Contraseña",
         strip=False,
@@ -71,7 +84,20 @@ class RegistroUsuarioForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username",)
+        fields = ("username", "email")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Ya existe un usuario con ese correo.")
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
 
 
 class InicioSesionForm(AuthenticationForm):
@@ -92,4 +118,27 @@ class InicioSesionForm(AuthenticationForm):
         ),
         "inactive": "Esta cuenta está inactiva.",
     }
+
+
+class RecuperacionPasswordForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="Correo electrónico",
+        max_length=254,
+        widget=forms.EmailInput(attrs={"autocomplete": "email"}),
+    )
+
+
+class CambioPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="Nueva contraseña",
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        help_text="",
+    )
+    new_password2 = forms.CharField(
+        label="Confirmar nueva contraseña",
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        help_text="Repite la nueva contraseña para confirmarla.",
+    )
 
