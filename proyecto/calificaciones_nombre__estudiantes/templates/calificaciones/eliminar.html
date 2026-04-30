@@ -3,13 +3,23 @@
 {% block title %}Eliminar calificación{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h1>Eliminar calificación</h1>
-    <p>Confirma la eliminación de la calificación de {{ calificacion.nombre_estudiante }} en {{ calificacion.asignatura }}.</p>
-    <form method="post">
-        {% csrf_token %}
-        <button class="button danger" type="submit">Eliminar</button>
-        <a class="button secondary" href="{% url 'listar_calificaciones' %}">Cancelar</a>
-    </form>
+<section class="page-narrow">
+    <article class="panel danger-panel">
+        <div class="panel-header">
+            <h1 class="panel-title">Eliminar calificación</h1>
+            <p class="panel-copy">Confirma la eliminación de la calificación de {{ calificacion.nombre_estudiante }} en {{ calificacion.asignatura }}.</p>
+        </div>
+        <div class="record-preview">
+            <span>Identificación: {{ calificacion.identificacion }}</span>
+            <span>Promedio actual: {{ calificacion.promedio }}</span>
+        </div>
+        <form method="post" class="form-stack">
+            {% csrf_token %}
+            <div class="button-row">
+                <button class="button danger" type="submit">Eliminar</button>
+                <a class="button secondary" href="{% url 'listar_calificaciones' %}">Cancelar</a>
+            </div>
+        </form>
+    </article>
 </section>
 {% endblock %}

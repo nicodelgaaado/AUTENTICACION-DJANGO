@@ -3,9 +3,12 @@
 {% block title %}Sesión cerrada{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h1>Sesión cerrada</h1>
-    <p>Has cerrado sesión correctamente.</p>
-    <a class="button" href="{% url 'login' %}">Iniciar sesión</a>
+<section class="auth-layout">
+    <article class="panel status-card">
+        <div class="status-icon" aria-hidden="true">✓</div>
+        <h1 class="panel-title">Sesión cerrada</h1>
+        <p class="panel-copy">Has cerrado sesión correctamente.</p>
+        <a class="button" href="{% url 'login' %}">Iniciar sesión</a>
+    </article>
 </section>
 {% endblock %}

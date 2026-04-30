@@ -3,9 +3,12 @@
 {% block title %}Correo enviado{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h1>Revisa tu correo</h1>
-    <p>Si el correo indicado pertenece a una cuenta activa, recibirás instrucciones para recuperar la contraseña.</p>
-    <a class="button" href="{% url 'login' %}">Volver al inicio de sesión</a>
+<section class="auth-layout">
+    <article class="panel status-card">
+        <div class="status-icon" aria-hidden="true">✉</div>
+        <h1 class="panel-title">Revisa tu correo</h1>
+        <p class="panel-copy">Si el correo indicado pertenece a una cuenta activa, recibirás instrucciones para recuperar la contraseña.</p>
+        <a class="button" href="{% url 'login' %}">Volver al inicio de sesión</a>
+    </article>
 </section>
 {% endblock %}

@@ -3,8 +3,11 @@
 {% block title %}403{% endblock %}
 
 {% block content %}
-<section class="panel">
-    <h1>403</h1>
-    <p>No tienes permisos para realizar esta acción.</p>
+<section class="page-narrow">
+    <article class="panel status-card status-card-left">
+        <div class="status-icon status-icon-danger" aria-hidden="true">!</div>
+        <h1 class="panel-title">403</h1>
+        <p class="panel-copy">No tienes permisos para realizar esta acción.</p>
+    </article>
 </section>
 {% endblock %}
