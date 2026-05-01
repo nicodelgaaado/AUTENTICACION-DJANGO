@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "deploy:cloudflare": "wrangler deploy cloudflare/worker.js",
-    "dev:cloudflare": "wrangler dev cloudflare/worker.js --local"
+    "deploy:cloudflare": "wrangler deploy --config wrangler.jsonc",
+    "dev:cloudflare": "wrangler dev --config wrangler.jsonc --local"
   },
   "devDependencies": {
     "wrangler": "^4.87.0"
